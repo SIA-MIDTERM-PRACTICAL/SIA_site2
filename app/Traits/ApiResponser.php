@@ -1,5 +1,6 @@
 <?php
 namespace App\Traits;
+
 use Illuminate\Http\Response;
 trait ApiResponser
 {
@@ -9,18 +10,18 @@ trait ApiResponser
 * @param int $code
 * @return Illuminate\Http\JsonResponse
 */
-public function successResponse($data, $code = Response::HTTP_OK)
-{
-return response()->json(['data' => $data], $code);
-}
+    public function successResponse($data, $code = Response::HTTP_OK)
+    {
+    return response()->json(['data' => $data], $code);
+    }
 /**
 * Build error responses
 * @param string|array $message
 * @param int $code
 * @return Illuminate\Http\JsonResponse
 */
-public function errorResponse($message, $code)
-{
+    public function errorResponse($message, $code)
+    {
     return response()->json(['error' => $message, 'code' => $code],
     $code);
     }

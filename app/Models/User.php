@@ -1,14 +1,19 @@
 <?php
 
-    namespace App\Models;
-    use Illuminate\Database\Eloquent\Model;
+namespace App\Models;
 
-    class User extends Model{
-        protected $table = 'tblstudent';
-        protected $fillable = [
-            'lastname','firstname', 'middlename','age' 
-        ];
+use App\Models\User;
 
-        public $timestamps = false;
-        protected $primaryKey = 'studid';
-    }
+use Illuminate\Database\Eloquent\Model;
+
+
+class User extends Model {
+
+    public $timestamps = false;
+
+    protected $table = 'tblstudent';
+    protected $primaryKey = 'studid';  
+    protected $fillable = [
+        'studid', 'lastname', 'firstname', 'middlename', 'bday', 'age'
+    ];
+}

@@ -2,51 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Models\User;
+use Illuminate\Http\Request; 
 use App\Traits\ApiResponser;
-use DB;
+use App\Models\User; 
 
-Class StudentController extends Controller {
+class StudentController extends Controller
+{
     use ApiResponser;
-    
+
     private $request;
+
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
-    public function getUsers(){    
 
-        $users = DB::connection('mysql')    
-        ->select("Select * from tblstudent");
-        return $this->successResponse($users);
-    }
-
-    public function index(){
-
+    public function browseAllStudents()
+    {
         $users = User::all();
+
         return $this->successResponse($users);
-    }   
-
-    public function add(Request $request){
-        
-        $rules = [
-            'lastname' => 'required|max:20',
-            'firstname' => 'required|max:20',
-            'middlename' => 'required|max:20',
-
-        ];
-
-        $this->validate($request,$rules);
-
-        $user = User::create($request->all());
-        return $this->successResponse($user, Response::HTTP_CREATED);
     }
 
-    public function show($id){
-        
-        $user = User::where('userid', $id)->first();
+    public function searchStudentID($id)
+    { 
+        $user = User::where('studid', $id)->first();
         if($user){
             return $this->successResponse($user);
         }
@@ -55,30 +36,52 @@ Class StudentController extends Controller {
         }
     }
 
-    public function update(Request $request, $id) { 
-
+    public function insertStudent(Request $request)
+    {
         $rules = [
-            'username' => 'required|max:20',
-            'password' => 'required|max:20'
+            $this->validate($request, [
+                'lastname' => 'required|alpha:max:50',
+                'firstname' => 'required|alpha:max:50',
+                'middlename' => 'required|alpha:max:50',
+                'bday' => 'date',
+                'age' => 'required|int:lt:50 years'
+            ])  
         ];
-    
+        $this->validate($request, $rules);
+        $user = User::create($request->all());
+        
+        return $this->successResponse($user, Response::HTTP_CREATED);
+    }
+
+    public function updateStudent(Request $request, $id)
+    {
+        $rules = [
+            $this->validate($request, [
+                'lastname' => 'required|alpha:max:50',
+                'firstname' => 'required|alpha:max:50',
+                'middlename' => 'required|alpha:max:50',
+                'bday' => 'date',
+                'age' => 'required|int:gt:50 years'
+            ])  
+        ];
         $this->validate($request, $rules);
     
         $user = User::findOrFail($id);
-    
         $user->fill($request->all());
     
         if ($user->isClean()) {
-            return Response()->json("At least one value must change", Response::HTTP_UNPROCESSABLE_ENTITY);
+            return Response()->json("At least one value must change", 
+            Response::HTTP_UNPROCESSABLE_ENTITY);
         } else {
             $user->save();
             return $this->successResponse($user);
         }
     }
 
-    public function delete($id) { 
-
+    public function deleteStudent($id)
+    {
         $user = User::findOrFail($id);
+    
         $user->delete();
     
         return $this->successResponse($user);
